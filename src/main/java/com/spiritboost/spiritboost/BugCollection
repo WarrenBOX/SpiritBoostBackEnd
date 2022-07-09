@@ -1,0 +1,31 @@
+1. 用postman提交requestbody时候, password格式不符合, 把值赋给了id
+        {
+            "name": "dfdsf",
+            "password": "5454",
+            "id": 52
+        }
+    *Debug: 1. 核对:请求头 content-type
+            2. 分辨Parameter和requestbody
+
+2. 在id变成52之后，再次提交request （post） , 新数据的id变为53
+
+
+
+3. put方法后，发现值没有变
+    *Debug: @Transactional到Service层update方法
+
+4. 修改后，如果password没有变,修改后变成这样
+  "name": "{\r\n    \"name\":\"BigPyke\",\r\n    \"password\":1545\r\n}",
+    "password": "1545",
+    "id": 1
+    * 4.1 Debug：
+            4.1.1. 检查逻辑是否正确 -> 代码逻辑无误，optional.get()确实返回的是容器里的对象Customer
+            4.1.2. 检查annotation ：
+                4.1.2.1 or : 将controller里面参数的@改为  @RequestParam 而不是@RequestBody -> 成功
+                4.1.2.2 问题根源，@Responsebody只能有一个,@RequestParam可以有多个
+                //参考网址
+                    https://blog.csdn.net/justry_deng/article/details/80972817
+                4.1.2.3 使用RequestBody修改， 将参数改为class,因为json文件里传输的是对象 -> 成功
+
+    * 4.2 总结：
+        4.2.1 什么时候使用requestParam 和 requestbody -》 前端传参是在url里还是在body -》 使用的数据是基本类型还是对象
